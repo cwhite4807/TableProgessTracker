@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes">
+
+  <meta
+    name="apple-mobile-web-app-title"
+    content="Table Tracker">
+
+  <title>Table Tracker</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: #f4f5f7;
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+      padding: 20px;
+    }
+
+    .tracker {
+      width: 100%;
+      max-width: 900px;
+    }
+
+    /* PROGRESS BAR */
+
+    .progress-container {
+      width: 100%;
+      height: 90px;
+
+      display: flex;
+
+      overflow: hidden;
+
+      border-radius: 16px;
+
+      background: #d93025;
+
+      box-shadow:
+        0 5px 15px
+        rgba(0,0,0,0.15);
+    }
+
+    .bar {
+      height: 100%;
+
+      transition:
+        width 0.35s ease;
+    }
+
+    .completed {
+      background: #22a447;
+    }
+
+    .in-progress {
+      background: #f4c430;
+    }
+
+    .remaining {
+      background: #d93025;
+    }
+
+    /* SUMMARY */
+
+    .summary {
+      display: flex;
+
+      justify-content: center;
+
+      gap: 45px;
+
+      margin-top: 30px;
+
+      text-align: center;
+    }
+
+    .summary-box {
+      min-width: 110px;
+    }
+
+    .number {
+      font-size: 38px;
+
+      font-weight: 700;
+
+      color: #222;
+    }
+
+    .label {
+      margin-top: 4px;
+
+      font-size: 14px;
+
+      color: #777;
+
+      text-transform: uppercase;
+
+      letter-spacing: 0.5px;
+    }
+
+    /* INPUTS */
+
+    .inputs {
+      display: flex;
+
+      justify-content: center;
+
+      gap: 20px;
+
+      margin-top: 35px;
+    }
+
+    .input-group {
+      flex: 1;
+
+      max-width: 180px;
+
+      text-align: center;
+    }
+
+    .input-group label {
+      display: block;
+
+      margin-bottom: 8px;
+
+      font-size: 16px;
+
+      font-weight: 600;
+
+      color: #444;
+    }
+
+    input {
+      width: 100%;
+
+      padding: 14px 10px;
+
+      border:
+        2px solid #d0d0d0;
+
+      border-radius: 10px;
+
+      background: white;
+
+      font-size: 24px;
+
+      text-align: center;
+
+      outline: none;
+
+      -webkit-appearance: none;
+    }
+
+    input:focus {
+      border-color: #555;
+    }
+
+    /* BUTTON */
+
+    button {
+      display: block;
+
+      width: 100%;
+
+      max-width: 380px;
+
+      margin: 25px auto 0;
+
+      padding: 16px;
+
+      border: none;
+
+      border-radius: 10px;
+
+      background: #222;
+
+      color: white;
+
+      font-size: 18px;
+
+      font-weight: 600;
+
+      cursor: pointer;
+
+      -webkit-appearance: none;
+
+      -webkit-tap-highlight-color: transparent;
+
+      touch-action: manipulation;
+    }
+
+    button:active {
+      background: #444;
+
+      transform: scale(0.98);
+    }
+
+    /* STATUS */
+
+    #status {
+      text-align: center;
+
+      min-height: 20px;
+
+      margin-top: 12px;
+
+      font-size: 14px;
+
+      color: #22a447;
+    }
+
+    /* LEGEND */
+
+    .legend {
+      display: flex;
+
+      justify-content: center;
+
+      gap: 25px;
+
+      margin-top: 15px;
+
+      font-size: 14px;
+
+      color: #666;
+    }
+
+    .legend-item {
+      display: flex;
+
+      align-items: center;
+
+      gap: 7px;
+    }
+
+    .dot {
+      width: 13px;
+      height: 13px;
+
+      border-radius: 50%;
+    }
+
+    .green {
+      background: #22a447;
+    }
+
+    .yellow {
+      background: #f4c430;
+    }
+
+    .red {
+      background: #d93025;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 500px) {
+
+      .progress-container {
+        height: 70px;
+      }
+
+      .summary {
+        gap: 20px;
+
+        margin-top: 25px;
+      }
+
+      .number {
+        font-size: 30px;
+      }
+
+      .label {
+        font-size: 12px;
+      }
+
+      .inputs {
+        gap: 12px;
+
+        margin-top: 30px;
+      }
+
+      .input-group label {
+        font-size: 14px;
+      }
+
+      input {
+        font-size: 22px;
+
+        padding: 13px 5px;
+      }
+
+      .legend {
+        gap: 15px;
+
+        font-size: 12px;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <div class="tracker">
+
+
+    <!-- PROGRESS BAR -->
+
+    <div class="progress-container">
+
+      <div
+        class="bar completed"
+        id="completedBar">
+      </div>
+
+      <div
+        class="bar in-progress"
+        id="inProgressBar">
+      </div>
+
+      <div
+        class="bar remaining"
+        id="remainingBar">
+      </div>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="summary">
+
+
+      <div class="summary-box">
+
+        <div
+          class="number"
+          id="completedDisplay">
+          0
+        </div>
+
+        <div class="label">
+          Completed
+        </div>
+
+      </div>
+
+
+      <div class="summary-box">
+
+        <div
+          class="number"
+          id="inProgressDisplay">
+          0
+        </div>
+
+        <div class="label">
+          In-Progress
+        </div>
+
+      </div>
+
+
+      <div class="summary-box">
+
+        <div
+          class="number"
+          id="remainingDisplay">
+          330
+        </div>
+
+        <div class="label">
+          Remaining
+        </div>
+
+      </div>
+
+
+    </div>
+
+
+    <!-- INPUTS -->
+
+    <div class="inputs">
+
+
+      <div class="input-group">
+
+        <label for="completed">
+          Tables Completed
+        </label>
+
+        <input
+          id="completed"
+          type="number"
+          min="0"
+          max="330"
+          inputmode="numeric"
+          value="0">
+
+      </div>
+
+
+      <div class="input-group">
+
+        <label for="inProgress">
+          Tables In-Progress
+        </label>
+
+        <input
+          id="inProgress"
+          type="number"
+          min="0"
+          max="330"
+          inputmode="numeric"
+          value="0">
+
+      </div>
+
+
+    </div>
+
+
+    <!-- UPDATE BUTTON -->
+
+    <button
+      id="updateButton"
+      type="button">
+
+      Update Tracker
+
+    </button>
+
+
+    <div id="status"></div>
+
+
+    <!-- LEGEND -->
+
+    <div class="legend">
+
+      <div class="legend-item">
+
+        <div class="dot green"></div>
+
+        Completed
+
+      </div>
+
+
+      <div class="legend-item">
+
+        <div class="dot yellow"></div>
+
+        In-Progress
+
+      </div>
+
+
+      <div class="legend-item">
+
+        <div class="dot red"></div>
+
+        Remaining
+
+      </div>
+
+    </div>
+
+
+  </div>
+
+
+  <script>
+
+    const TOTAL_TABLES = 330;
+
+
+    /*
+     * UPDATE THE DISPLAY
+     */
+
+    function updateDisplay(
+      completed,
+      inProgress
+    ) {
+
+      const remaining =
+        TOTAL_TABLES -
+        completed -
+        inProgress;
+
+
+      const completedPercent =
+        (completed / TOTAL_TABLES) * 100;
+
+
+      const inProgressPercent =
+        (inProgress / TOTAL_TABLES) * 100;
+
+
+      const remainingPercent =
+        (remaining / TOTAL_TABLES) * 100;
+
+
+      document.getElementById(
+        "completedBar"
+      ).style.width =
+        completedPercent + "%";
+
+
+      document.getElementById(
+        "inProgressBar"
+      ).style.width =
+        inProgressPercent + "%";
+
+
+      document.getElementById(
+        "remainingBar"
+      ).style.width =
+        remainingPercent + "%";
+
+
+      document.getElementById(
+        "completedDisplay"
+      ).textContent =
+        completed;
+
+
+      document.getElementById(
+        "inProgressDisplay"
+      ).textContent =
+        inProgress;
+
+
+      document.getElementById(
+        "remainingDisplay"
+      ).textContent =
+        remaining;
+
+    }
+
+
+    /*
+     * BUTTON ACTION
+     */
+
+    document
+      .getElementById("updateButton")
+      .addEventListener(
+        "click",
+        function() {
+
+
+          let completed =
+            parseInt(
+              document.getElementById(
+                "completed"
+              ).value,
+              10
+            );
+
+
+          let inProgress =
+            parseInt(
+              document.getElementById(
+                "inProgress"
+              ).value,
+              10
+            );
+
+
+          if (isNaN(completed)) {
+            completed = 0;
+          }
+
+
+          if (isNaN(inProgress)) {
+            inProgress = 0;
+          }
+
+
+          completed =
+            Math.max(
+              0,
+              Math.min(
+                TOTAL_TABLES,
+                completed
+              )
+            );
+
+
+          inProgress =
+            Math.max(
+              0,
+              Math.min(
+                TOTAL_TABLES,
+                inProgress
+              )
+            );
+
+
+          /*
+           * Make sure the total
+           * doesn't exceed 330.
+           */
+
+          if (
+            completed +
+            inProgress >
+            TOTAL_TABLES
+          ) {
+
+            document.getElementById(
+              "status"
+            ).textContent =
+              "The total cannot exceed 330 tables.";
+
+            document.getElementById(
+              "status"
+            ).style.color =
+              "#d93025";
+
+            return;
+          }
+
+
+          /*
+           * Put cleaned values
+           * back into the fields.
+           */
+
+          document.getElementById(
+            "completed"
+          ).value =
+            completed;
+
+
+          document.getElementById(
+            "inProgress"
+          ).value =
+            inProgress;
+
+
+          /*
+           * Update the display.
+           */
+
+          updateDisplay(
+            completed,
+            inProgress
+          );
+
+
+          /*
+           * Show confirmation.
+           */
+
+          document.getElementById(
+            "status"
+          ).textContent =
+            "Updated ✓";
+
+          document.getElementById(
+            "status"
+          ).style.color =
+            "#22a447";
+
+
+          /*
+           * Remove message.
+           */
+
+          setTimeout(
+            function() {
+
+              document.getElementById(
+                "status"
+              ).textContent = "";
+
+            },
+            2000
+          );
+
+        }
+      );
+
+
+    /*
+     * INITIAL DISPLAY
+     */
+
+    updateDisplay(0, 0);
+
+  </script>
+
+
+</body>
+
+</html>
