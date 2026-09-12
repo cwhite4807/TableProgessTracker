@@ -678,7 +678,13 @@
           /*
            * Update the display.
            */
-
+          localStorage.setItem(
+  "tableProgress",
+  JSON.stringify({
+    completed: completed,
+    inProgress: inProgress
+  })
+);
           updateDisplay(
             completed,
             inProgress
@@ -723,7 +729,30 @@
      * INITIAL DISPLAY
      */
 
-    updateDisplay(0, 0);
+   // Load the last saved numbers
+const savedData = localStorage.getItem("tableProgress");
+
+if (savedData) {
+
+  const data = JSON.parse(savedData);
+
+  document.getElementById("completed").value =
+    data.completed || 0;
+
+  document.getElementById("inProgress").value =
+    data.inProgress || 0;
+
+  updateDisplay(
+    data.completed || 0,
+    data.inProgress || 0
+  );
+
+} else {
+
+  updateDisplay(0, 0);
+
+}
+
 
   </script>
 
